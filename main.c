@@ -11,16 +11,10 @@ typedef struct main {
     ssize_t input_length;
 } InputBuffer;
 
-// 基本命令结果
-typedef enum {
-    META_COMMAND_SUCCESS,
-    META_COMMAND_UNRECOGNIZED_COMMAND
-} MetaCommandResult;
-
 typedef struct {
 } Statement;
 
-InputBuffer *new_input_buffer( ) {
+InputBuffer *new_input_buffer() {
     InputBuffer *input_buffer = malloc(sizeof(InputBuffer));
     input_buffer->buffer = NULL;
     input_buffer->buffer_length = 0;
@@ -49,7 +43,21 @@ void close_input_buffer(InputBuffer *input_buffer) {
 
 void print_prompt() { printf("db > "); }
 
+// 基本命令结果
+typedef enum {
+    META_COMMAND_SUCCESS,
+    META_COMMAND_UNRECOGNIZED_COMMAND
+} MetaCommandResult;
+// 执行基本命令
 MetaCommandResult do_meta_command(InputBuffer *input_buffer) {}
+
+// prepare的结果
+typedef enum { PREPARE_SUCCESS, PREPARE_UNRECOGNIZED_STATEMENT } PrepareResult;
+// 预处理语句
+PrepareResult prepare_statement(InputBuffer *inpute_buffer,
+                                Statement *statement) {}
+
+void execute_statement(Statement *statement) {}
 
 int main() {
     InputBuffer *input_buffer = new_input_buffer();
@@ -69,12 +77,14 @@ int main() {
 
         Statement statement;
         switch (prepare_statement(input_buffer, &statement)) {
-        case:
-            /* code */
+        case (PREPARE_SUCCESS):
             break;
-
-        default:
-            break;
+        case (PREPARE_UNRECOGNIZED_STATEMENT):
+            printf("Unrecognized keyword at start of '%s' .\n",
+                   input_buffer->buffer);
+            continue;
         }
+        execute_statement(&statement);
+        printf("Executed.\n");
     }
 }
