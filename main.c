@@ -1,4 +1,5 @@
 #include <stdbool.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -11,8 +12,40 @@ typedef struct main {
     ssize_t input_length;
 } InputBuffer;
 
+typedef enum { STATEMENT_INSERT, STATEMENT_SELECT } StatementType;
+
+// 基本命令结果
+typedef enum {
+    META_COMMAND_SUCCESS,
+    META_COMMAND_UNRECOGNIZED_COMMAND
+} MetaCommandResult;
+
+// prepare的结果
+typedef enum {
+    PREPARE_SUCCESS,
+    PREPARE_SYNTAX_ERROR,
+    PREPARE_UNRECOGNIZED_STATEMENT
+} PrepareResult;
+
+// 执行结果
+typedef enum { EXECUTE_SUCCESS, EXECUTE_TABLE_FULL } ExecuteResult;
+
+// 行
+#define COLUMN_USERNAME_SIZE 32
+#define COLUMN_EMAIL_SIZE 255
 typedef struct {
+    uint32_t id;
+    char username[COLUMN_USERNAME_SIZE];
+    char email[COLUMN_EMAIL_SIZE];
+} Row;
+
+// 语句
+typedef struct {
+    StatementType type;
+    Row row_to_insert; // 只用于插入语句
 } Statement;
+
+#define size_of_attribute(Struct, Attribute) sizeof(((Struct *)0)->Attribute)
 
 InputBuffer *new_input_buffer() {
     InputBuffer *input_buffer = malloc(sizeof(InputBuffer));
@@ -43,20 +76,14 @@ void close_input_buffer(InputBuffer *input_buffer) {
 
 void print_prompt() { printf("db > "); }
 
-// 基本命令结果
-typedef enum {
-    META_COMMAND_SUCCESS,
-    META_COMMAND_UNRECOGNIZED_COMMAND
-} MetaCommandResult;
 // 执行基本命令
 MetaCommandResult do_meta_command(InputBuffer *input_buffer) {}
 
-// prepare的结果
-typedef enum { PREPARE_SUCCESS, PREPARE_UNRECOGNIZED_STATEMENT } PrepareResult;
 // 预处理语句
 PrepareResult prepare_statement(InputBuffer *inpute_buffer,
                                 Statement *statement) {}
 
+// 执行语句
 void execute_statement(Statement *statement) {}
 
 int main() {
